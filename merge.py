@@ -1,4 +1,3 @@
-import subprocess
 from pathlib import Path
 
 
@@ -21,11 +20,11 @@ GUÍA DE USO: FUSIONAR RAMAS (MERGE)
 ===================================================
 
 1. ¿QUÉ HACE ESTA OPCIÓN?
-   - Integra las modificaciones de una rama secundaria hacia una rama principal.
+   - Explica el flujo para integrar modificaciones entre dos ramas.
 
 2. PASOS MANUALES EN TERMINAL:
-   - git checkout main
-   - git merge <rama_origen>
+   git checkout main
+   git merge feature
 """
     carpeta_opcion.mkdir(parents=True, exist_ok=True)
     (carpeta_opcion / "guia.txt").write_text(guia, encoding="utf-8")
@@ -34,68 +33,65 @@ GUÍA DE USO: FUSIONAR RAMAS (MERGE)
     carpeta_errores.mkdir(parents=True, exist_ok=True)
 
     errores = {
-        "error_1.txt": """===================================================
-ERROR 1: CONFLICT (content): Merge conflict
-===================================================
-CAUSA: Cambios contradictorios en las mismas líneas de código.
-SOLUCIÓN: Abre los archivos en VS Code, resuelve los cambios, haz 'git add .' y luego 'git commit'.""",
-        "error_2.txt": """===================================================
-ERROR 2: pathspec 'rama' did not match any file
-===================================================
-CAUSA: La rama de origen no existe en la base de datos local de Git.
-SOLUCIÓN: Revisa los nombres con 'git branch' o ejecuta 'git fetch'.""",
-        "error_3.txt": """===================================================
-ERROR 3: Local changes would be overwritten
-===================================================
-CAUSA: Tienes archivos modificados sin comitear que chocan con la fusión.
-SOLUCIÓN: Ejecuta 'git commit -m "guardado"' o resérvalos con 'git stash'.""",
-        "error_4.txt": """===================================================
-ERROR 4: Refusing to merge unrelated histories
-===================================================
-CAUSA: Las ramas no comparten un commit inicial común.
-SOLUCIÓN: Ejecuta 'git merge <rama_origen> --allow-unrelated-histories'.""",
-        "error_5.txt": """===================================================
-ERROR 5: Detached HEAD state
-===================================================
-CAUSA: Estás apuntando a un commit específico en lugar de a una rama activa.
-SOLUCIÓN: Regresa a la rama principal ejecutando 'git checkout main'.""",
-        "error_6.txt": """===================================================
-ERROR 6: Automatic merge failed; fix conflicts and then commit
-===================================================
-CAUSA: Hubo conflictos no resueltos y la operación de merge quedó pausada a la mitad.
-SOLUCIÓN: Si deseas cancelar la fusión completa, ejecuta en terminal 'git merge --abort'.""",
-        "error_7.txt": """===================================================
-ERROR 7: Fatal: Not possible to fast-forward, aborting
-===================================================
-CAUSA: Git está configurado para requerir integraciones limpia estilo Fast-Forward sin divergencias.
-SOLUCIÓN: Permite la creación de un commit de fusión ejecutando 'git merge --no-ff <rama_origen>'.""",
-        "error_8.txt": """===================================================
-ERROR 8: Another git process seems to be running (.git/index.lock)
-===================================================
-CAUSA: Un proceso anterior de Git se interrumpió abruptamente dejando el archivo de bloqueo activo.
-SOLUCIÓN: Cierra todos los editores o elimina manualmente el archivo dentro de tu proyecto '.git/index.lock'.""",
+        "error_1.txt": (
+            "ERROR 1: CONFLICT (content).\nCAUSA: Cambios contradictorios en"
+            " el mismo archivo.\nSOLUCIÓN: Resuelve conflictos en VS Code,"
+            " guarda, haz 'git add .' y 'git commit'."
+        ),
+        "error_2.txt": (
+            "ERROR 2: pathspec did not match any file(s).\nCAUSA: La rama no"
+            " existe localmente.\nSOLUCIÓN: Consulta las ramas disponibles con"
+            " 'git branch'."
+        ),
+        "error_3.txt": (
+            "ERROR 3: Local changes would be overwritten.\nCAUSA: Tienes"
+            " cambios sin guardar.\nSOLUCIÓN: Haz 'git commit' o resérvalos"
+            " con 'git stash'."
+        ),
+        "error_4.txt": (
+            "ERROR 4: Refusing to merge unrelated histories.\nCAUSA: Sin"
+            " commits iniciales en común.\nSOLUCIÓN: Usa 'git merge <rama>"
+            " --allow-unrelated-histories'."
+        ),
+        "error_5.txt": (
+            "ERROR 5: Detached HEAD state.\nCAUSA: Estás sobre un commit y no"
+            " una rama.\nSOLUCIÓN: Vuelve con 'git checkout main'."
+        ),
+        "error_6.txt": (
+            "ERROR 6: Automatic merge failed.\nCAUSA: Proceso de fusión"
+            " interrumpido por conflictos.\nSOLUCIÓN: Cancela con 'git merge"
+            " --abort'."
+        ),
+        "error_7.txt": (
+            "ERROR 7: Not possible to fast-forward.\nCAUSA: Divergencia entre"
+            " ramas.\nSOLUCIÓN: Fuerza un commit de fusión con 'git merge"
+            " --no-ff <rama>'."
+        ),
+        "error_8.txt": (
+            "ERROR 8: index.lock activo.\nCAUSA: Proceso de Git"
+            " bloqueado.\nSOLUCIÓN: Elimina el archivo '.git/index.lock'."
+        ),
     }
 
-    for nombre_archivo, contenido in errores.items():
-        (carpeta_errores / nombre_archivo).write_text(
-            contenido, encoding="utf-8"
-        )
+    for nombre, contenido in errores.items():
+        (carpeta_errores / nombre).write_text(contenido, encoding="utf-8")
 
     print(
-        f"📄 Guía y 8 archivos de error independientes creados en: {carpeta_opcion}"
+        "📄 Carpeta 'merge' actualizada en:"
+        f" {carpeta_opcion.relative_to(carpeta_opcion.parents[1])}"
     )
 
 
-def fusionar_ramas(rama_origen, rama_destino="main"):
+def fusionar_ramas():
     escritorio = obtener_ruta_escritorio()
     carpeta_opcion = escritorio / "github_ayuda" / "merge"
     generar_archivos_merge(carpeta_opcion)
 
-    try:
-        subprocess.run(["git", "checkout", rama_destino], check=True)
-        subprocess.run(["git", "merge", rama_origen], check=True)
-        print(
-            f"✓ Rama '{rama_origen}' fusionada exitosamente en '{rama_destino}'."
-        )
-    except Exception as e:
-        print(f"❌ Error durante el merge: {e}")
+    print("\n" + "=" * 55)
+    print("      GUÍA EDUCATIVA: FUSIONAR RAMAS (MERGE)")
+    print("=" * 55)
+    print("1. Cambia a la rama destino: git checkout main")
+    print("2. Fusiona la rama secundaria: git merge <nombre_rama>")
+    print("3. Si hay conflictos, resuélvelos en el editor y haz commit.")
+    print("=" * 55)
+    print("✓ Guía y 8 archivos de error generados en github_ayuda/merge.\n")

@@ -1,5 +1,3 @@
-import os
-import subprocess
 from pathlib import Path
 
 
@@ -18,17 +16,21 @@ def obtener_ruta_escritorio():
 
 def generar_archivos_crear_repo(carpeta_opcion):
     guia = """===================================================
-GUÍA DE USO: CREAR REPOSITORIO LOCAL
+GUÍA DE USO: CREAR Y CONECTAR REPOSITORIO
 ===================================================
 
 1. ¿QUÉ HACE ESTA OPCIÓN?
-   - Crea una nueva carpeta local.
-   - Inicializa la estructura interna de Git (.git) mediante 'git init'.
+   - Muestra la secuencia para inicializar un repositorio local.
+   - Vincula el repositorio local con tu repositorio remoto en GitHub.
 
 2. PASOS MANUALES EN TERMINAL:
-   - mkdir <nombre_carpeta>
-   - cd <nombre_carpeta>
-   - git init
+   echo "# t" >> README.md
+   git init
+   git add README.md
+   git commit -m "first commit"
+   git branch -M main
+   git remote add origin https://github.com/aiglesias-lgtm/t.git
+   git push -u origin main
 """
     carpeta_opcion.mkdir(parents=True, exist_ok=True)
     (carpeta_opcion / "guia.txt").write_text(guia, encoding="utf-8")
@@ -37,68 +39,71 @@ GUÍA DE USO: CREAR REPOSITORIO LOCAL
     carpeta_errores.mkdir(parents=True, exist_ok=True)
 
     errores = {
-        "error_1.txt": """===================================================
-ERROR 1: 'git' no se reconoce como un comando
-===================================================
-CAUSA: Git no está instalado en el sistema o falta agregarlo al PATH.
-SOLUCIÓN: Descarga el instalador desde https://git-scm.com/ y reinicia la terminal.""",
-        "error_2.txt": """===================================================
-ERROR 2: Permission denied (Permiso denegado)
-===================================================
-CAUSA: El usuario no posee privilegios de escritura en el directorio destino.
-SOLUCIÓN: Ejecuta VS Code como Administrador o elige una ruta con permisos.""",
-        "error_3.txt": """===================================================
-ERROR 3: Invalid argument / Caracteres no permitidos
-===================================================
-CAUSA: El nombre de la carpeta contiene caracteres prohibidos (<, >, :, ", /, \\, |, ?, *).
-SOLUCIÓN: Utiliza únicamente letras, números, guiones bajos (_) o guiones medios (-).""",
-        "error_4.txt": """===================================================
-ERROR 4: No space left on device (Sin espacio)
-===================================================
-CAUSA: La unidad de almacenamiento no cuenta con espacio libre suficiente.
-SOLUCIÓN: Libera espacio en el disco o selecciona otra ubicación.""",
-        "error_5.txt": """===================================================
-ERROR 5: Repositorio ya existente / Corrupto
-===================================================
-CAUSA: La carpeta ya contiene una estructura de Git previa o dañada.
-SOLUCIÓN: Muestra archivos ocultos, elimina la carpeta '.git' y vuelve a intentar.""",
-        "error_6.txt": """===================================================
-ERROR 6: UNC paths are not supported / Ruta de red no mapeada
-===================================================
-CAUSA: Intentas inicializar un repositorio en una ruta de red compartida (\\\\servidor\\carpeta).
-SOLUCIÓN: Mapea la carpeta de red a una letra de unidad local (ej. Z:) o trabaja en una ruta local.""",
-        "error_7.txt": """===================================================
-ERROR 7: Operation not permitted / Bloqueo de Antivirus
-===================================================
-CAUSA: Windows Defender o un antivirus externo bloqueó la creación de carpetas ocultas.
-SOLUCIÓN: Agrega la carpeta de tu proyecto a las excepciones de tu software antivirus.""",
-        "error_8.txt": """===================================================
-ERROR 8: warning: LF will be replaced by CRLF
-===================================================
-CAUSA: Diferencia entre los saltos de línea de Windows (CRLF) y Linux/Mac (LF).
-SOLUCIÓN: Ejecuta en la terminal 'git config --global core.autocrlf true' para normalizar los saltos.""",
+        "error_1.txt": (
+            "ERROR 1: 'git' no se reconoce como un comando.\nCAUSA: Git no está"
+            " instalado o no se agregó al PATH.\nSOLUCIÓN: Descarga e instala"
+            " Git desde https://git-scm.com/"
+        ),
+        "error_2.txt": (
+            "ERROR 2: Permission denied.\nCAUSA: Falta de permisos en la"
+            " carpeta.\nSOLUCIÓN: Ejecuta la terminal como Administrador."
+        ),
+        "error_3.txt": (
+            "ERROR 3: remote origin already exists.\nCAUSA: Ya existe un"
+            " remoto configurado.\nSOLUCIÓN: Ejecuta 'git remote remove origin'"
+            " antes de vincular."
+        ),
+        "error_4.txt": (
+            "ERROR 4: Sin espacio libre en disco.\nCAUSA: Unidad de"
+            " almacenamiento llena.\nSOLUCIÓN: Libera espacio en el disco."
+        ),
+        "error_5.txt": (
+            "ERROR 5: Repositorio corrupto.\nCAUSA: Error interno en"
+            " '.git'.\nSOLUCIÓN: Elimina la carpeta oculta '.git' y ejecuta"
+            " 'git init'."
+        ),
+        "error_6.txt": (
+            "ERROR 6: Repository not found (404).\nCAUSA: La URL remota es"
+            " errónea o no existe.\nSOLUCIÓN: Revisa la URL de tu repositorio"
+            " en GitHub."
+        ),
+        "error_7.txt": (
+            "ERROR 7: Authentication failed.\nCAUSA: Credenciales"
+            " rechazadas.\nSOLUCIÓN: Inicia sesión en GitHub o usa un Personal"
+            " Access Token."
+        ),
+        "error_8.txt": (
+            "ERROR 8: LF sustituido por CRLF.\nCAUSA: Incompatibilidad de"
+            " saltos de línea.\nSOLUCIÓN: Ejecuta 'git config --global"
+            " core.autocrlf true'."
+        ),
     }
 
-    for nombre_archivo, contenido in errores.items():
-        (carpeta_errores / nombre_archivo).write_text(
-            contenido, encoding="utf-8"
-        )
+    for nombre, contenido in errores.items():
+        (carpeta_errores / nombre).write_text(contenido, encoding="utf-8")
 
     print(
-        f"📄 Guía y 8 archivos de error independientes creados en: {carpeta_opcion}"
+        "📄 Carpeta 'crear_repo' actualizada en:"
+        f" {carpeta_opcion.relative_to(carpeta_opcion.parents[1])}"
     )
 
 
-def crear_repositorio_local(nombre_repo):
+def crear_repositorio_local():
     escritorio = obtener_ruta_escritorio()
     carpeta_opcion = escritorio / "github_ayuda" / "crear_repo"
     generar_archivos_crear_repo(carpeta_opcion)
 
-    try:
-        os.makedirs(nombre_repo, exist_ok=True)
-        subprocess.run(["git", "init"], cwd=nombre_repo, check=True)
-        print(
-            f"✓ Repositorio '{nombre_repo}' creado e inicializado correctamente."
-        )
-    except Exception as e:
-        print(f"❌ Error al crear el repositorio: {e}")
+    print("\n" + "=" * 55)
+    print("      GUÍA EDUCATIVA: CREAR Y CONECTAR REPOSITORIO")
+    print("=" * 55)
+    print('1. echo "# t" >> README.md')
+    print("2. git init")
+    print("3. git add README.md")
+    print('4. git commit -m "first commit"')
+    print("5. git branch -M main")
+    print("6. git remote add origin https://github.com/aiglesias-lgtm/t.git")
+    print("7. git push -u origin main")
+    print("=" * 55)
+    print(
+        "✓ Guía y 8 archivos de error generados en github_ayuda/crear_repo.\n"
+    )

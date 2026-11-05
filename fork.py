@@ -1,4 +1,3 @@
-import subprocess
 from pathlib import Path
 
 
@@ -17,14 +16,20 @@ def obtener_ruta_escritorio():
 
 def generar_archivos_fork(carpeta_opcion):
     guia = """===================================================
-GUÍA DE USO: CLONAR / FORKEAR
+GUÍA EXPLICATIVA: CÓMO HACER UN FORK Y CLONAR
 ===================================================
 
-1. ¿QUÉ HACE ESTA OPCIÓN?
-   - Descarga una copia local exacta de un repositorio alojado en GitHub.
+1. ¿QUÉ ES UN FORK?
+   - Un 'Fork' es una copia independiente de un repositorio ajeno en tu propia cuenta de GitHub.
+   - Permite trabajar y modificar el código sin alterar el proyecto original.
 
-2. PASOS MANUALES EN TERMINAL:
-   - git clone https://github.com/usuario/repositorio.git
+2. PASOS PARA HACER UN FORK Y CLONARLO:
+   1. Ingresa en GitHub al repositorio original que deseas copiar.
+   2. Presiona el botón 'Fork' (ubicado arriba a la derecha).
+   3. Entra a tu perfil de GitHub y abre tu copia recién creada.
+   4. Haz clic en el botón verde '<> Code' y copia la URL.
+   5. En tu terminal ejecuta:
+      git clone https://github.com/TU_USUARIO/NOMBRE_REPOSITORIO.git
 """
     carpeta_opcion.mkdir(parents=True, exist_ok=True)
     (carpeta_opcion / "guia.txt").write_text(guia, encoding="utf-8")
@@ -33,67 +38,68 @@ GUÍA DE USO: CLONAR / FORKEAR
     carpeta_errores.mkdir(parents=True, exist_ok=True)
 
     errores = {
-        "error_1.txt": """===================================================
-ERROR 1: Repository not found (Error 404)
-===================================================
-CAUSA: La URL ingresada es incorrecta o el repositorio es privado.
-SOLUCIÓN: Verifica la URL en GitHub o configura credenciales SSH/PAT.""",
-        "error_2.txt": """===================================================
-ERROR 2: Destination path already exists
-===================================================
-CAUSA: Ya existe una carpeta con el mismo nombre en la ruta actual.
-SOLUCIÓN: Elimina o renombra la carpeta previa antes de clonar.""",
-        "error_3.txt": """===================================================
-ERROR 3: Authentication failed
-===================================================
-CAUSA: GitHub deshabilitó la autenticación por contraseña tradicional.
-SOLUCIÓN: Genera un Personal Access Token (PAT) y úsalo en lugar de la contraseña.""",
-        "error_4.txt": """===================================================
-ERROR 4: Connection timed out / Could not resolve host
-===================================================
-CAUSA: Sin conexión a internet o la red bloquea la conexión a GitHub.
-SOLUCIÓN: Revisa tu red o deshabilita temporalmente la VPN o proxy.""",
-        "error_5.txt": """===================================================
-ERROR 5: SSL certificate problem
-===================================================
-CAUSA: Certificado de seguridad no validado por el sistema de red.
-SOLUCIÓN: Ejecuta 'git config --global http.sslVerify false' o actualiza certificados.""",
-        "error_6.txt": """===================================================
-ERROR 6: Early EOF / index-pack failed
-===================================================
-CAUSA: La conexión falló mientras se descargaba un repositorio muy pesado.
-SOLUCIÓN: Clona con profundidad limitada ejecutando 'git clone --depth 1 <URL>'.""",
-        "error_7.txt": """===================================================
-ERROR 7: Filename too long / Ruta demasiado larga
-===================================================
-CAUSA: Windows limita las rutas a un máximo de 260 caracteres por defecto.
-SOLUCIÓN: Habilita rutas largas en Git ejecutando 'git config --global core.longpaths true'.""",
-        "error_8.txt": """===================================================
-ERROR 8: Git LFS (Large File Storage) missing
-===================================================
-CAUSA: El repositorio usa punteros de archivos pesados y no tienes Git LFS instalado.
-SOLUCIÓN: Descarga e instala Git LFS desde https://git-lfs.github.com/ y ejecuta 'git lfs install'.""",
+        "error_1.txt": (
+            "ERROR 1: Repository not found (404).\nCAUSA: La URL ingresada es"
+            " incorrecta o el repositorio es privado.\nSOLUCIÓN: Verifica la URL"
+            " en GitHub o solicita acceso al propietario."
+        ),
+        "error_2.txt": (
+            "ERROR 2: Destination path already exists.\nCAUSA: Ya existe una"
+            " carpeta con el mismo nombre en la ruta actual.\nSOLUCIÓN: Borra"
+            " la carpeta previa o cambia de ubicación."
+        ),
+        "error_3.txt": (
+            "ERROR 3: Authentication failed.\nCAUSA: Credenciales de GitHub no"
+            " válidas o desactualizadas.\nSOLUCIÓN: Genera un Personal Access"
+            " Token (PAT) o configura SSH."
+        ),
+        "error_4.txt": (
+            "ERROR 4: Connection timed out / Could not resolve host.\nCAUSA:"
+            " Sin acceso a internet o bloqueo de red.\nSOLUCIÓN: Revisa tu"
+            " conexión o desactiva la VPN."
+        ),
+        "error_5.txt": (
+            "ERROR 5: SSL certificate problem.\nCAUSA: Incompatibilidad con"
+            " el certificado SSL local.\nSOLUCIÓN: Ejecuta 'git config"
+            " --global http.sslVerify false'."
+        ),
+        "error_6.txt": (
+            "ERROR 6: Early EOF / index-pack failed.\nCAUSA: Desconexión al"
+            " descargar un proyecto muy pesado.\nSOLUCIÓN: Clona con 'git clone"
+            " --depth 1 <URL>'."
+        ),
+        "error_7.txt": (
+            "ERROR 7: Filename too long.\nCAUSA: Windows limita la longitud"
+            " de las rutas de archivos.\nSOLUCIÓN: Ejecuta 'git config --global"
+            " core.longpaths true'."
+        ),
+        "error_8.txt": (
+            "ERROR 8: Git LFS (Large File Storage) missing.\nCAUSA: El"
+            " proyecto requiere soporte para archivos pesados.\nSOLUCIÓN:"
+            " Instala Git LFS e inicialízalo con 'git lfs install'."
+        ),
     }
 
-    for nombre_archivo, contenido in errores.items():
-        (carpeta_errores / nombre_archivo).write_text(
-            contenido, encoding="utf-8"
-        )
+    for nombre, contenido in errores.items():
+        (carpeta_errores / nombre).write_text(contenido, encoding="utf-8")
 
     print(
-        f"📄 Guía y 8 archivos de error independientes creados en: {carpeta_opcion}"
+        "📄 Carpeta 'fork' actualizada en:"
+        f" {carpeta_opcion.relative_to(carpeta_opcion.parents[1])}"
     )
 
 
-def clonar_o_forkear(url_repositorio, destino="."):
+def clonar_o_forkear():
     escritorio = obtener_ruta_escritorio()
     carpeta_opcion = escritorio / "github_ayuda" / "fork"
     generar_archivos_fork(carpeta_opcion)
 
-    try:
-        subprocess.run(
-            ["git", "clone", url_repositorio], cwd=destino, check=True
-        )
-        print(f"✓ Repositorio '{url_repositorio}' clonado correctamente.")
-    except Exception as e:
-        print(f"❌ Error al clonar el repositorio: {e}")
+    print("\n" + "=" * 55)
+    print("      GUÍA EDUCATIVA: PROCESO PARA HACER UN FORK")
+    print("=" * 55)
+    print("1. Ve al repositorio original en GitHub.com")
+    print("2. Presiona el botón 'Fork' (arriba a la derecha).")
+    print("3. Copia la URL de la copia generada en tu perfil.")
+    print("4. En terminal ejecuta: git clone <URL_DE_TU_FORK>")
+    print("=" * 55)
+    print("✓ Guía y 8 archivos de error generados en github_ayuda/fork.\n")

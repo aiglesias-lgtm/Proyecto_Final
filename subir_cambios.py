@@ -1,4 +1,3 @@
-import subprocess
 from pathlib import Path
 
 
@@ -21,14 +20,12 @@ GUÍA DE USO: SUBIR CAMBIOS (PUSH)
 ===================================================
 
 1. ¿QUÉ HACE ESTA OPCIÓN?
-   - Prepara los archivos ('git add .').
-   - Registra el punto de control ('git commit -m').
-   - Sube los cambios al remoto ('git push origin <rama>').
+   - Explica el flujo para guardar y publicar modificaciones en GitHub.
 
 2. PASOS MANUALES EN TERMINAL:
-   - git add .
-   - git commit -m "mensaje"
-   - git push origin main
+   git add .
+   git commit -m "update"
+   git push origin main
 """
     carpeta_opcion.mkdir(parents=True, exist_ok=True)
     (carpeta_opcion / "guia.txt").write_text(guia, encoding="utf-8")
@@ -37,67 +34,67 @@ GUÍA DE USO: SUBIR CAMBIOS (PUSH)
     carpeta_errores.mkdir(parents=True, exist_ok=True)
 
     errores = {
-        "error_1.txt": """===================================================
-ERROR 1: Updates were rejected (Remote contains work)
-===================================================
-CAUSA: Hay cambios remotos en GitHub que no has bajado a tu equipo.
-SOLUCIÓN: Ejecuta 'git pull origin main' antes de realizar el push.""",
-        "error_2.txt": """===================================================
-ERROR 2: 'origin' does not appear to be a git repository
-===================================================
-CAUSA: El proyecto local no está vinculado a una URL en GitHub.
-SOLUCIÓN: Ejecuta 'git remote add origin <URL_del_repositorio>'.""",
-        "error_3.txt": """===================================================
-ERROR 3: src refspec main does not match any
-===================================================
-CAUSA: Intentas hacer push sin ningún commit previo en la rama.
-SOLUCIÓN: Ejecuta 'git add .' y realiza tu primer 'git commit -m "primer commit"'.""",
-        "error_4.txt": """===================================================
-ERROR 4: Permission to user denied (Error 403)
-===================================================
-CAUSA: La cuenta autenticada no posee permisos de colaborador o dueño.
-SOLUCIÓN: Solicita permisos de acceso o actualiza las credenciales.""",
-        "error_5.txt": """===================================================
-ERROR 5: Nothing to commit, working tree clean
-===================================================
-CAUSA: No hay cambios detectados respecto al último commit.
-SOLUCIÓN: Modifica y guarda algún archivo antes de ejecutar la opción.""",
-        "error_6.txt": """===================================================
-ERROR 6: File exceeds GitHub's file size limit of 100 MB
-===================================================
-CAUSA: Intentas subir un archivo individual que supera los 100 MB.
-SOLUCIÓN: Quita el archivo del commit, agregalo a '.gitignore' o utiliza Git LFS.""",
-        "error_7.txt": """===================================================
-ERROR 7: Push rejected due to Secret Scanning / Protection
-===================================================
-CAUSA: GitHub detectó claves API, tokens o contraseñas en el código comiteado.
-SOLUCIÓN: Elimina los secretos expuestos del historial o genera nuevas credenciales.""",
-        "error_8.txt": """===================================================
-ERROR 8: RPC failed; result=22, HTTP code = 413 / Out of memory
-===================================================
-CAUSA: El volumen de datos subidos en el push supera el límite de búfer HTTP de Git.
-SOLUCIÓN: Incrementa el límite ejecutando 'git config --global http.postBuffer 524288000'.""",
+        "error_1.txt": (
+            "ERROR 1: Updates were rejected (Remote contains work).\nCAUSA:"
+            " Hay cambios en GitHub que no tienes localmente.\nSOLUCIÓN:"
+            " Ejecuta 'git pull origin main' antes del push."
+        ),
+        "error_2.txt": (
+            "ERROR 2: 'origin' does not appear to be a git repository.\nCAUSA:"
+            " Sin remoto configurado.\nSOLUCIÓN: Agrega la URL con 'git remote"
+            " add origin <URL>'."
+        ),
+        "error_3.txt": (
+            "ERROR 3: src refspec main does not match any.\nCAUSA: No hay"
+            " commits locales previo al push.\nSOLUCIÓN: Haz 'git add .' y"
+            ' \'git commit -m "commit"\'.'
+        ),
+        "error_4.txt": (
+            "ERROR 4: Permission denied (Error 403).\nCAUSA: Credenciales sin"
+            " permiso de escritura.\nSOLUCIÓN: Revisa tus credenciales en"
+            " GitHub."
+        ),
+        "error_5.txt": (
+            "ERROR 5: Nothing to commit.\nCAUSA: No hay cambios"
+            " detectados.\nSOLUCIÓN: Modifica y guarda algún archivo primero."
+        ),
+        "error_6.txt": (
+            "ERROR 6: File exceeds 100 MB.\nCAUSA: Archivo demasiado"
+            " pesado.\nSOLUCIÓN: Agrégalo a '.gitignore' o usa Git LFS."
+        ),
+        "error_7.txt": (
+            "ERROR 7: Secret Scanning rejected push.\nCAUSA: Exposición de"
+            " claves/tokens.\nSOLUCIÓN: Elimina las claves expuestas del"
+            " historial."
+        ),
+        "error_8.txt": (
+            "ERROR 8: RPC failed / HTTP 413.\nCAUSA: Límite de búfer HTTP"
+            " superado.\nSOLUCIÓN: Incrementa el límite con 'git config"
+            " --global http.postBuffer 524288000'."
+        ),
     }
 
-    for nombre_archivo, contenido in errores.items():
-        (carpeta_errores / nombre_archivo).write_text(
-            contenido, encoding="utf-8"
-        )
+    for nombre, contenido in errores.items():
+        (carpeta_errores / nombre).write_text(contenido, encoding="utf-8")
 
     print(
-        f"📄 Guía y 8 archivos de error independientes creados en: {carpeta_opcion}"
+        "📄 Carpeta 'subir_cambios' actualizada en:"
+        f" {carpeta_opcion.relative_to(carpeta_opcion.parents[1])}"
     )
 
 
-def subir_cambios_git(mensaje_commit, rama="main"):
+def subir_cambios_git():
     escritorio = obtener_ruta_escritorio()
     carpeta_opcion = escritorio / "github_ayuda" / "subir_cambios"
     generar_archivos_subir_cambios(carpeta_opcion)
 
-    try:
-        subprocess.run(["git", "add", "."], check=True)
-        subprocess.run(["git", "commit", "-m", mensaje_commit], check=True)
-        subprocess.run(["git", "push", "origin", rama], check=True)
-        print(f"✓ Cambios subidos con éxito a la rama '{rama}'.")
-    except Exception as e:
-        print(f"❌ Error al subir cambios: {e}")
+    print("\n" + "=" * 55)
+    print("      GUÍA EDUCATIVA: SUBIR CAMBIOS A GITHUB")
+    print("=" * 55)
+    print("1. Prepara todos los archivos: git add .")
+    print('2. Registra los cambios: git commit -m "mensaje"')
+    print("3. Sube a la nube: git push origin main")
+    print("=" * 55)
+    print(
+        "✓ Guía y 8 archivos de error generados en github_ayuda/subir_cambios.\n"
+    )

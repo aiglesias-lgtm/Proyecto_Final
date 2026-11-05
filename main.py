@@ -21,25 +21,13 @@ def ejecutar():
         opcion = input("\nSelecciona una opción (1-5): ").strip()
 
         if opcion == "1":
-            nombre = input("Ingresa el nombre para el repositorio: ")
-            crear_repositorio_local(nombre)
-
+            crear_repositorio_local()
         elif opcion == "2":
-            url = input("Ingresa la URL del repositorio a clonar: ")
-            clonar_o_forkear(url)
-
+            clonar_o_forkear()
         elif opcion == "3":
-            origen = input("Nombre de la rama origen (ej. feature-branch): ")
-            destino = (
-                input("Nombre de la rama destino [Por defecto: main]: ")
-                or "main"
-            )
-            fusionar_ramas(origen, destino)
-
+            fusionar_ramas()
         elif opcion == "4":
-            mensaje = input("Ingresa el mensaje para el commit: ")
-            subir_cambios_git(mensaje)
-
+            subir_cambios_git()
         elif opcion == "5":
             print("Saliendo del programa...")
             break
